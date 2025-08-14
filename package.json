@@ -1,0 +1,15 @@
+{
+  "name": "@drivej/graphql-codegen-fragments-plugin",
+  "version": "0.1.0",
+  "main": "dist/fragments-plugin.cjs",
+  "types": "dist/fragments-plugin.d.ts",
+  "files": ["dist"],
+  "license": "MIT",
+  "peerDependencies": {
+    "@graphql-codegen/cli": "^5",
+    "graphql": "^16"
+  },
+  "dependencies": {
+    "change-case": "^4"
+  }
+}
