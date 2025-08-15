@@ -18,8 +18,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "clean": "rimraf dist",
-    "prepublishOnly": "npm run clean && npm run build",
-    "deploy": "npm version patch & npm publish --access public"
+    "prepublishOnly": "npm run clean && npm run build"
   },
   "peerDependencies": {
     "@graphql-codegen/cli": "^5.0.0",
