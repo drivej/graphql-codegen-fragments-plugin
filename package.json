@@ -1,17 +1,21 @@
 {
   "name": "@drivej/graphql-codegen-fragments-plugin",
-  "version": "0.1.2",
+  "version": "0.0.1",
   "description": "GraphQL Codegen plugin that emits depth-agnostic submodel GQLMap constants and parent/root maps with topological ordering.",
   "license": "MIT",
-  "main": "dist/fragments-plugin.cjs",
+  "main": "dist/fragments-plugin.js",
   "types": "dist/fragments-plugin.d.ts",
   "files": [
     "dist"
   ],
   "exports": {
     ".": {
-      "require": "./dist/fragments-plugin.cjs",
+      "require": "./dist/fragments-plugin.js",
       "types": "./dist/fragments-plugin.d.ts"
+    },
+    "./helpers": {
+      "require": "./dist/fragments-plugin-helpers.js",
+      "types": "./dist/fragments-plugin-helpers.d.ts"
     }
   },
   "sideEffects": false,
