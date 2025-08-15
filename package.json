@@ -3,19 +3,15 @@
   "version": "0.0.3",
   "description": "GraphQL Codegen plugin that emits depth-agnostic submodel GQLMap constants and parent/root maps with topological ordering.",
   "license": "MIT",
-  "main": "dist/fragments-plugin.js",
-  "types": "dist/fragments-plugin.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "exports": {
     ".": {
-      "require": "./dist/fragments-plugin.js",
-      "types": "./dist/fragments-plugin.d.ts"
-    },
-    "./helpers": {
-      "require": "./dist/fragments-plugin-helpers.js",
-      "types": "./dist/fragments-plugin-helpers.d.ts"
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
   "sideEffects": false,
