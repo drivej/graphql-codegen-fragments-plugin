@@ -3,6 +3,7 @@ import { pascalCase } from 'change-case';
 import { GraphQLList, GraphQLNonNull, isEnumType, isObjectType, isScalarType, type GraphQLObjectType, type GraphQLSchema } from 'graphql';
 import path from 'path';
 
+export * from './fragments-plugin-helpers';
 // -----------------------------
 // Config
 // -----------------------------

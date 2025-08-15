@@ -11,17 +11,41 @@ npm i -D @your-scope/graphql-codegen-fragments-plugin change-case
 ```
 
 ## Configure (codegen.yml)
-```yml
-generates:
-  src/graphql/gql.fragments.ts:
-    plugins:
-      - '@your-scope/graphql-codegen-fragments-plugin'
-    config:
-      depth: 4                 # parent/root depth
-      subModelDepth: 2         # submodel expansion before referencing other maps
-      helpersImport: '../lib/gql.helpers'
-      typesImport: './graphql'
-      namingConvention: 'change-case-all#pascalCase' # or 'keep'
+```typescript
+generates: {
+    'src/generated/graphql-fragments.ts': {
+        plugins: [
+            {
+                '@drivej/graphql-codegen-fragments-plugin': {
+                    depth: 15,
+                    subModelDepth: 15,
+                    namingConvention: 'change-case-all#pascalCase', // <- match TS
+                    skipTypes: ['Upload'],
+                    skipFields: { User: ['password', 'token'] }
+                }
+            }
+        ]
+    }
+}
+```
+## Example Usage
+```typescript
+import { getSwellcast, loadSwellById } from '../generated/graphql-fragments';
+import { useGraphQLQuery } from './useGraphQLQuery';
+
+export const useSwellcast = (args: Partial<QueryGetSwellcastArgs>) => {
+  const queryName = 'getSwellcast';
+  const defaultArgs: QueryGetSwellcastArgs = {
+    alias: '',
+    limit: 24,
+    offset: 0
+  };
+
+  return useGraphQLQuery<OpenApiSwellcastResponse, QueryGetSwellcastArgs, typeof queryName>(queryName, getSwellcast, args, defaultArgs, {
+    queryKey: [queryName, args.alias],
+    enabled: !!args.alias
+  });
+};
 ```
 
 ## Notes
