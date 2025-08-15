@@ -12,8 +12,6 @@ export type FragmentsPluginConfig = {
   subModelDepth?: number;
   namingConvention?: 'keep' | 'change-case-all#pascalCase';
   rename?: Record<string, string>;
-  /** Where the generated file will import helpers (e.g. '../lib/gql.helpers' or '@/lib/gql.helpers') */
-  helpersImport?: string;
   /** Where the generated file will import TS GraphQL types (e.g. './graphql' or '@/generated/graphql') */
   typesImport?: string;
   /** Project root used to resolve relative module specifiers; defaults to process.cwd() */
@@ -160,6 +158,13 @@ function topoOrder(deps: Map<string, Set<string>>): string[] {
 function asModuleSpecifier(spec: string | undefined, outFile: string, baseDir: string): string {
   if (!spec) return '';
   if (!spec.startsWith('.') && !spec.startsWith('/')) return spec;
+
+  // If spec is already a relative path, use it as-is (relative to the output file)
+  if (spec.startsWith('./') || spec.startsWith('../')) {
+    return spec.replace(/\.(ts|js|cjs|mjs)$/i, '');
+  }
+
+  // For absolute paths, calculate relative path from output file directory
   const from = path.dirname(outFile);
   const abs = path.resolve(baseDir, spec);
   let rel = path.relative(from, abs).replace(/\\/g, '/');
@@ -176,7 +181,6 @@ export const plugin: PluginFunction<FragmentsPluginConfig> = (schema, _docs, cfg
   const baseDir = cfg?.baseDir ?? process.cwd();
   const outFile = info?.outputFile ?? 'gql.fragments.ts';
 
-  const helpersMod = asModuleSpecifier(cfg?.helpersImport ?? '../lib/gql.helpers', outFile, baseDir);
   const typesMod = asModuleSpecifier(cfg?.typesImport ?? './graphql', outFile, baseDir);
 
   // Initialize schema analysis for dynamic flag and enum detection
@@ -185,8 +189,8 @@ export const plugin: PluginFunction<FragmentsPluginConfig> = (schema, _docs, cfg
 
   const out: string[] = [];
   out.push('/* AUTO-GENERATED: do not edit by hand */');
-  out.push(`import type { GQLMap } from '${helpersMod}'`);
-  out.push(`import * as T from '${typesMod}'`);
+  out.push(`import type { GQLMap } from '@drivej/graphql-codegen-fragments-plugin';`);
+  out.push(`import * as T from '${typesMod}';`);
   out.push('');
 
   // Submodel maps (topologically ordered) — depth-agnostic typing for ergonomics

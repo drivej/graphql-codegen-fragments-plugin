@@ -20,8 +20,7 @@ generates: {
                     depth: 15,
                     subModelDepth: 15,
                     namingConvention: 'change-case-all#pascalCase', // <- match TS
-                    skipTypes: ['Upload'],
-                    skipFields: { User: ['password', 'token'] },
+                    typesImport: './graphql', // <- where to import GraphQL types from
                     customFlagTypes: ['customFlag', 'specialType'] // <- NEW: custom flag types
                 }
             }
@@ -30,6 +29,12 @@ generates: {
 }
 ```
 
+```typescript
+import { getQueryFlags, getQueryEnums } from '../generated/graphql-fragments';
+
+console.log(getQueryFlags()); // ['flags', 'type', 'status', ...]
+console.log(getQueryEnums()); // ['SectionType', 'Status', ...]
+```
 ## Dynamic Schema Analysis
 
 This plugin now automatically analyzes your GraphQL schema to identify:
@@ -64,28 +69,30 @@ const queryEnums = ['sectionType'];
 
 **Existing users**: This is a **backward-compatible** change. Your existing code will continue to work without any modifications. The plugin now automatically detects the types that were previously hardcoded, plus many more from your actual schema.
 
+**Import changes**: The generated file now imports `GQLMap` directly from the plugin package:
+```typescript
+// Generated imports are now:
+import type { GQLMap } from '@drivej/graphql-codegen-fragments-plugin';
+import * as T from './graphql';
+```
+
 **New features available**:
 - Add `customFlagTypes` to your config to specify additional flag types
 - Use `getQueryFlags()` and `getQueryEnums()` for debugging
 - Use `createSchemaAwareRenderer()` for custom rendering with specific schemas
+- Removed `helpersImport` config option (no longer needed)
+
 ## Example Usage
 ```typescript
+
+import { renderGql } from '@drivej/graphql-codegen-fragments-plugin';
+import { OpenApiSwellcastResponse, OpenApiSwellResponse, QueryGetSwellcastArgs, QueryLoadSwellByIdArgs } from '../generated/graphql';
 import { getSwellcast, loadSwellById } from '../generated/graphql-fragments';
-import { useGraphQLQuery } from './useGraphQLQuery';
 
-export const useSwellcast = (args: Partial<QueryGetSwellcastArgs>) => {
-  const queryName = 'getSwellcast';
-  const defaultArgs: QueryGetSwellcastArgs = {
-    alias: '',
-    limit: 24,
-    offset: 0
-  };
+const gql_full = renderGql<OpenApiSwellResponse, QueryLoadSwellByIdArgs>('loadSwellById', loadSwellById, { id: '' });
 
-  return useGraphQLQuery<OpenApiSwellcastResponse, QueryGetSwellcastArgs, typeof queryName>(queryName, getSwellcast, args, defaultArgs, {
-    queryKey: [queryName, args.alias],
-    enabled: !!args.alias
-  });
-};
+const gql_partial = renderGql<OpenApiSwellResponse, QueryLoadSwellByIdArgs>('loadSwellById', ['id', { audio: ['url'] }], { id: '' });
+
 ```
 
 ## Notes
