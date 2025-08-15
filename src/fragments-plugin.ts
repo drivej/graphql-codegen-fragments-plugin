@@ -18,6 +18,8 @@ export type FragmentsPluginConfig = {
   typesImport?: string;
   /** Project root used to resolve relative module specifiers; defaults to process.cwd() */
   baseDir?: string;
+  /** Custom field names or types that should be treated as flags (rendered without quotes) */
+  customFlagTypes?: string[];
 };
 
 // -----------------------------
@@ -176,6 +178,10 @@ export const plugin: PluginFunction<FragmentsPluginConfig> = (schema, _docs, cfg
 
   const helpersMod = asModuleSpecifier(cfg?.helpersImport ?? '../lib/gql.helpers', outFile, baseDir);
   const typesMod = asModuleSpecifier(cfg?.typesImport ?? './graphql', outFile, baseDir);
+
+  // Initialize schema analysis for dynamic flag and enum detection
+  const { initializeSchemaAnalysis } = require('./fragments-plugin-helpers');
+  initializeSchemaAnalysis(schema, cfg?.customFlagTypes);
 
   const out: string[] = [];
   out.push('/* AUTO-GENERATED: do not edit by hand */');
