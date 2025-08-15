@@ -1,4 +1,4 @@
-# @your-scope/graphql-codegen-fragments-plugin
+# @drivej/graphql-codegen-fragments-plugin
 
 A GraphQL Codegen plugin that generates:
 - `export const <TypeName>Map: GQLMap<T.<TypeName>, number>` for **every object type** (depth-agnostic)
